@@ -11,10 +11,7 @@ import pandas as pd
 
 #from tabulate import tabulate
 
-pd.set_option('display.width', None)
-
-
-
+pd.set_option('display.width', 0)
 # File to Load (Remember to Change These)
 school_data_to_load = "Resources/schools_complete.csv"
 student_data_to_load = "Resources/students_complete.csv"
@@ -113,12 +110,51 @@ print(dfOne)
 # ## School Summary
 
 # * Create an overview table that summarizes key metrics about each school, including:
+
+#print(school_data)
+
 #   * School Name
 #   * School Type
 #   * Total Students
 #   * Total School Budget
 #   * Per Student Budget
+
+schoolOverview = school_data.copy()
+#print(schoolOverview.head())
+
+
+
+#print(schoolOverview.head())
+
+# add per student budget to table
+
+schoolOverview['per student budget'] = schoolOverview['budget']/schoolOverview['size']
+
 #   * Average Math Score
+
+# group student table by school
+# total
+
+
+#schoolMeans = pd.DataFrame(school_data_complete.groupby(["school_name"]).mean())
+eachSchool = pd.DataFrame(school_data_complete.groupby(["school_name"]))
+schoolMeans = school_data_complete.groupby(["school_name"]).mean()
+pd.set_option('display.max_colwidth', 0)
+SchoolAvgMath = schoolMeans['math_score']
+SchoolAvgRead = schoolMeans['reading_score']
+print(schoolMeans)
+print(eachSchool)
+print(SchoolAvgMath)
+
+
+
+#print("cc")
+#dfThree = dfTwo("math_score").mean()
+#print(dfThree)
+
+#schoolOverview['average Math Score ']
+
+#print(schoolOverview)
 #   * Average Reading Score
 #   * % Passing Math
 #   * % Passing Reading

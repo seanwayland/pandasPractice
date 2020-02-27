@@ -9,7 +9,7 @@
 # Dependencies and Setup
 import pandas as pd
 
-#from tabulate import tabulate
+# from tabulate import tabulate
 
 pd.set_option('display.width', 0)
 # File to Load (Remember to Change These)
@@ -20,7 +20,7 @@ student_data_to_load = "Resources/students_complete.csv"
 school_data = pd.read_csv(school_data_to_load)
 student_data = pd.read_csv(student_data_to_load)
 
-#print(school_data)
+# print(school_data)
 
 # Combine the data into a single dataset
 school_data_complete = pd.merge(student_data, school_data, how="left", on=["school_name", "school_name"])
@@ -47,71 +47,65 @@ print(totalBudget)
 totalMathScore = student_data['math_score'].sum()
 
 print(totalMathScore)
-averageMathScore = totalMathScore/numStudents
+averageMathScore = totalMathScore / numStudents
 print(averageMathScore)
 # 
 # * Calculate the average reading score
 #
 totalReadingScore = student_data['reading_score'].sum()
 print(totalReadingScore)
-averageReadingScore = totalReadingScore/numStudents
+averageReadingScore = totalReadingScore / numStudents
 print(averageReadingScore)
 
 # * Calculate the overall passing rate (overall average score), i.e. (avg. math score + avg. reading score)/2
 #
-overallPassingRate = (averageMathScore + averageReadingScore)/2
+overallPassingRate = (averageMathScore + averageReadingScore) / 2
 print(overallPassingRate)
 # * Calculate the percentage of students with a passing math score (70 or greater)
 
 mathSeventy = student_data[student_data['math_score'] >= 70]
 mathSeventyAmt = len(mathSeventy)
 print(mathSeventyAmt)
-percentMathSeventy = mathSeventyAmt/numStudents*100
+percentMathSeventy = mathSeventyAmt / numStudents * 100
 print(percentMathSeventy)
-
 
 # * Calculate the percentage of students with a passing reading score (70 or greater)
 
 readSeventy = student_data[student_data['reading_score'] >= 70]
 readSeventyAmt = len(readSeventy)
 print(readSeventyAmt)
-percentReadSeventy = readSeventyAmt/numStudents*100
+percentReadSeventy = readSeventyAmt / numStudents * 100
 print(percentReadSeventy)
 # * Create a dataframe to hold the above results
 #
 
-dfOne={'Total Schools' : [numSchools],'Total Students' :[numStudents],'Total Budget':[totalBudget], \
-                                'Average Math Score' :[averageMathScore] ,'Average Reading Score' :[averageReadingScore], '% Passing Math' :[percentMathSeventy], '% Passing Reading' : [percentReadSeventy],'% Overall Passing Rate': [overallPassingRate]}
+dfOne = {'Total Schools': [numSchools], 'Total Students': [numStudents], 'Total Budget': [totalBudget], \
+         'Average Math Score': [averageMathScore], 'Average Reading Score': [averageReadingScore],
+         '% Passing Math': [percentMathSeventy], '% Passing Reading': [percentReadSeventy],
+         '% Overall Passing Rate': [overallPassingRate]}
 # * Optional: give the displayed data cleaner formatting
 
 dfOne = pd.DataFrame(dfOne)
 dfOne.style.hide_index()
 
-
-
 # * Optional: give the displayed data cleaner formatting
-#pd.options.display.float_format = '{0:,.2f}'.format
-#pd.options.display.integer_format = '{:, .2f}'.format
+# pd.options.display.float_format = '{0:,.2f}'.format
+# pd.options.display.integer_format = '{:, .2f}'.format
 
-#dfOne[2][0] = dfOne[2][0].map('${:,.2f}'.format)
-dfOne['Total Budget']=dfOne['Total Budget'].apply(lambda x: "${:,.2f}".format(x))
-dfOne['Total Students']=dfOne['Total Students'].apply(lambda x: "{:,}".format(x))
-
+# dfOne[2][0] = dfOne[2][0].map('${:,.2f}'.format)
+dfOne['Total Budget'] = dfOne['Total Budget'].apply(lambda x: "${:,.2f}".format(x))
+dfOne['Total Students'] = dfOne['Total Students'].apply(lambda x: "{:,}".format(x))
 
 print(dfOne)
 
-
 # In[11]:
-
-
-
 
 
 # ## School Summary
 
 # * Create an overview table that summarizes key metrics about each school, including:
 
-#print(school_data)
+# print(school_data)
 
 #   * School Name
 #   * School Type
@@ -120,15 +114,14 @@ print(dfOne)
 #   * Per Student Budget
 
 schoolOverview = school_data.copy()
-#print(schoolOverview.head())
+# print(schoolOverview.head())
 
 
-
-#print(schoolOverview.head())
+# print(schoolOverview.head())
 
 # add per student budget to table
 
-schoolOverview['per student budget'] = schoolOverview['budget']/schoolOverview['size']
+schoolOverview['per student budget'] = schoolOverview['budget'] / schoolOverview['size']
 
 #   * Average Math Score
 
@@ -136,25 +129,73 @@ schoolOverview['per student budget'] = schoolOverview['budget']/schoolOverview['
 # total
 
 
-#schoolMeans = pd.DataFrame(school_data_complete.groupby(["school_name"]).mean())
+# schoolMeans = pd.DataFrame(school_data_complete.groupby(["school_name"]).mean())
 eachSchool = pd.DataFrame(school_data_complete.groupby(["school_name"]))
 schoolMeans = school_data_complete.groupby(["school_name"]).mean()
 pd.set_option('display.max_colwidth', 0)
 SchoolAvgMath = schoolMeans['math_score']
 SchoolAvgRead = schoolMeans['reading_score']
-print(schoolMeans)
-print(eachSchool)
-print(SchoolAvgMath)
+
+# mathSeventy = student_data[student_data['math_score'] >= 70]
+
+#declare a dict of lists version of the data
+# note the length of each array has to the same otherwise the compiler will complain
+dataDictOfList = {'team': ["A", "B", "C", "C", "D", "D", "E"], 'score': [1, 2, 3, 4, 5, 6, 7]}
+dictListDataFrame = pd.DataFrame(dataDictOfList)
+print("dictListDataFrame")
+print(dictListDataFrame)
+#sum of score for each team
+teamTotals = dictListDataFrame.groupby('team').sum()
+print("sum of score for each team")
+print(teamTotals)
+#only teams whose sum is greater than 3
+print("teams whose sum is greater than 3")
+totalGreaterThanThree = teamTotals[teamTotals['score'] > 3]
+print(totalGreaterThanThree)
+#how many times did each team score more than 3
+gamesAboveThree = dictListDataFrame[dictListDataFrame['score'] > 3]
+gamesAboveThree = gamesAboveThree.groupby('team').count()
+print("how many times each team scored more than 3 ")
+print(gamesAboveThree)
+
+#declare a list of list version of the data
+# note the number of members of each array is the number of columns
+# the number of arrays is the number of rows
+ListofListCols = ['team', 'score']
+dataListofList = [["A", 1], ["B", 2], ["C", 3], ["C", 4], ["D", 5], ["D", 6], ["E", 7], ]
+listListDataFrame = pd.DataFrame(dataListofList, columns=ListofListCols)
+print("list of lists data frame")
+print(listListDataFrame)
+
+LLtotals = listListDataFrame.groupby('team').sum()
+
+#only teams whose sum is greater than 3
+
+LLGreaterThanThree = LLtotals[LLtotals['score'] > 3]
+
+print("teams whose sum is greater than 3 from list of lists ")
+print(LLGreaterThanThree)
 
 
 
-#print("cc")
-#dfThree = dfTwo("math_score").mean()
-#print(dfThree)
 
-#schoolOverview['average Math Score ']
+# print(schoolMeans)
+# print(eachSchool)
+# print(SchoolAvgMath)
 
-#print(schoolOverview)
+
+# % Passing Math
+# % Passing Reading
+# Overall Passing Rate (Average of the above two)
+
+
+# print("cc")
+# dfThree = dfTwo("math_score").mean()
+# print(dfThree)
+
+# schoolOverview['average Math Score ']
+
+# print(schoolOverview)
 #   * Average Reading Score
 #   * % Passing Math
 #   * % Passing Reading
@@ -169,17 +210,11 @@ print(SchoolAvgMath)
 # In[13]:
 
 
-
-
-
 # ## Bottom Performing Schools (By Passing Rate)
 
 # * Sort and display the five worst-performing schools
 
 # In[14]:
-
-
-
 
 
 # ## Math Scores by Grade
@@ -197,17 +232,11 @@ print(SchoolAvgMath)
 # In[15]:
 
 
-
-
-
-# ## Reading Score by Grade 
+# ## Reading Score by Grade
 
 # * Perform the same operations as above for reading scores
 
 # In[16]:
-
-
-
 
 
 # ## Scores by School Spending
@@ -226,11 +255,7 @@ print(SchoolAvgMath)
 spending_bins = [0, 585, 615, 645, 675]
 group_names = ["<$585", "$585-615", "$615-645", "$645-675"]
 
-
 # In[18]:
-
-
-
 
 
 # ## Scores by School Size
@@ -244,11 +269,7 @@ group_names = ["<$585", "$585-615", "$615-645", "$645-675"]
 size_bins = [0, 1000, 2000, 5000]
 group_names = ["Small (<1000)", "Medium (1000-2000)", "Large (2000-5000)"]
 
-
 # In[19]:
-
-
-
 
 
 # ## Scores by School Type
@@ -258,11 +279,4 @@ group_names = ["Small (<1000)", "Medium (1000-2000)", "Large (2000-5000)"]
 # In[20]:
 
 
-
-
-
 # In[ ]:
-
-
-
-

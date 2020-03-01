@@ -15,7 +15,7 @@ student_data = pd.read_csv(student_data_to_load)
 # Combine the data into a single dataset
 school_data_complete = pd.merge(student_data, school_data, how="left", on=["school_name", "school_name"])
 
-#print(school_data_complete.tail())
+
 #print(student_data.head())
 
 
@@ -101,11 +101,11 @@ dfOne['Total Students'] = dfOne['Total Students'].apply(lambda x: "{:,}".format(
 sdc = school_data_complete.copy()
 sdcg = sdc.groupby('school_name')
 schoolMeans = sdcg.mean()
-print(schoolMeans)
+#print(schoolMeans)
 #Average Math Score
 #Average Reading Score
 
-print(school_data)
+#print(school_data)
 sdm = pd.merge(school_data, schoolMeans, on = "school_name")
 
 #['Student ID', 'School ID_y', 'size_y', 'budget_y']
@@ -121,8 +121,41 @@ sdm=sdm.rename(columns = {'budget_x':'budget'})
 sdm=sdm.rename(columns = {'reading_score':'avg read score'})
 sdm=sdm.rename(columns = {'math_score':'avg math score'})
 
+sdcg = pd.DataFrame(sdcg)
+pd.set_option('display.max_colwidth', 0)
+#print(sdcg.head())
+
+#Select students from large data set that scored greater than 70
+studentsPassingReading = student_data[student_data['reading_score'] >= 70]
+studentsPassingMath = student_data[student_data['math_score'] >= 70]
+
+
+#Count of students passing reading at each school
+passingReadingTable =studentsPassingReading.groupby(['school_name'])['reading_score'].count().reset_index()
+passingReadingTable.rename({'reading_score':'reading_count>70'},axis=1,inplace=True)
+
+#print(passingReadingTable)
+#Count of students passing math at each school
+passingMathTable = studentsPassingMath.groupby(['school_name'])['math_score'].count().reset_index()
+passingMathTable.rename({'math_score':'math_count>70'},axis=1,inplace=True)
+#print(passingMathTable)
+
+sdm = pd.merge(sdm, passingReadingTable, on = "school_name")
+sdm = pd.merge(sdm, passingMathTable, on = "school_name")
+
+
+
+sdm['% reading >70'] = sdm['reading_count>70']/sdm['size']*100
+sdm['% math >70'] = sdm['math_count>70']/sdm['size']*100
+
+
+sdm['% overall passing'] = (sdm['% reading >70'] + sdm['% math >70'])/2
 
 #print(sdm)
+
+
+
+
 '''
 
 
@@ -142,6 +175,39 @@ Overall Passing Rate (Average of the above two)
 
 
 
+topFiveSchools = sdm.sort_values(by=['% overall passing'],ascending=False).head(5)
+#print(topFiveSchools)
 
+'''
+Reading Scores by Grade
+Create a table that lists the average Reading Score for students of each grade level (9th, 10th, 11th, 12th) at each school.
+'''
 
+grade =  school_data_complete.groupby(['school_name', 'grade']).agg({'reading_score': ['mean']})
+print(grade)
 
+#print(grade)
+
+'''
+Scores by School Spending
+Create a table that breaks down school performances based on average Spending Ranges (Per Student). Use 4 reasonable bins to group school spending. Include in the table each of the following:
+Average Math Score
+Average Reading Score
+% Passing Math
+% Passing Reading
+Overall Passing Rate (Average of the above two)
+ 
+'''
+#print(sdm)
+# add column budget/size
+sdm['per student budget'] = sdm['budget']/sdm['size']
+#print(sdm)
+
+# bins 580 , 600 , 620 , 640
+bins = [577, 600, 620, 640, 660]
+
+sdm['spending summary'] = pd.cut(sdm["per student budget"], bins, labels=['577-600', '600-620', '620-640', '640-660'])
+
+sdm2 = sdm.copy()
+sdm2 = sdm2.sort_values(by=['spending summary'],ascending=False)
+print(sdm2)
